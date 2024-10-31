@@ -25,20 +25,3 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
     }
   }
 }
-
-# DynamoDB Table for State Locking
-/*resource "aws_dynamodb_table" "terraform_state_lock" {
-  name         = "terraform-lock"         # Table name for state locking
-  billing_mode = "PAY_PER_REQUEST"        # DynamoDB billing mode
-
-  attribute {
-    name = "LockID"                       # Primary key for the table
-    type = "S"
-  }
-
-  # Configure Time to Live (TTL) if needed, though it's optional for Terraform state locking
-  ttl {
-    enabled = false
-    attribute_name = "TimeToExist"
-  }
-}*/
