@@ -78,7 +78,9 @@ stages:
           # Step 1: Initialize and apply Terraform to create/update infrastructure
           - script: |
               cd terraform
-              terraform init 
+              export AWS_ACCESS_KEY_ID="$(aws_id)"
+              export AWS_SECRET_ACCESS_KEY="$(aws_key)"
+              terraform init
               terraform apply -var="docker_image=your-dockerhub-username/gbfs-dashboard:$(Build.BuildId)" -auto-approve
             displayName: "Initialize and apply Terraform for infrastructure with image tag"
             env:
