@@ -19,10 +19,16 @@ stages:
 
           - checkout: self
 
-          - script: |
-              cd terraform/backend
-              terraform init
-              terraform apply -auto-approve
+          - task: AWSCLI@1
+            inputs:
+              awsCredentials: 'gbfs'
+              regionName: 'us-east-1'
+              scriptType: 'bash'
+              scriptLocation: 'inline'
+              inlineScript: |
+                cd terraform/backend
+                terraform init
+                terraform apply -auto-approve
             displayName: "Initialize and apply Terraform for backend process"
 
   # Stage 2: Build and Push Docker Image
