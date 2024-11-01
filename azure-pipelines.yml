@@ -19,19 +19,19 @@ stages:
 
           - checkout: self
 
-          - task: AWSCLI@1
-            inputs:
-              awsCredentials: 'awsSC'
-              regionName: 'us-east-1'
-              awsCommand: 's3 mb s3://my-gbfs-terraform-state-bucket'
+          # - task: AWSCLI@1
+          #   inputs:
+          #     awsCredentials: 'awsSC'
+          #     regionName: 'us-east-1'
+          #     awsCommand: 's3 mb s3://my-gbfs-terraform-state-bucket'
 
           - script: |
               cd terraform/backend
               terraform init
               terraform apply -auto-approve
             displayName: "Initialize and apply Terraform for backend process"
-            env:
-              AWS_REGION: 'us-east-1'
+            # env:
+            #   AWS_REGION: 'us-east-1'
 
   # Stage 2: Build and Push Docker Image
   - stage: BuildAndPushDockerImage
