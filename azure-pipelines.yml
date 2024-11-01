@@ -3,6 +3,8 @@ trigger:
     include:
       - main
 
+variables:
+  AWS_REGION: 'us-east-1'
 stages:
   # Stage 1: Setup Backend for Terraform State
   - stage: SetupBackend
@@ -18,12 +20,6 @@ stages:
               terraformVersion: 'latest'
 
           - checkout: self
-
-           # Set environment variables for AWS credentials
-          - script: |
-              echo "##vso[task.setvariable variable=AWS_ACCESS_KEY_ID]$AWS_ACCESS_KEY_ID"
-              echo "##vso[task.setvariable variable=AWS_SECRET_ACCESS_KEY]$AWS_SECRET_ACCESS_KEY"
-            displayName: "Set AWS Credentials"
 
           - script: |
               cd terraform/backend
