@@ -52,6 +52,11 @@ stages:
 
           - checkout: self
 
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'DockerHubServiceConnection'
+              command: 'login'
+
           - script: |
               pip install -r requirements.txt
               docker build -t mano7899/gbfs-dashboard:$(Build.BuildId) .
