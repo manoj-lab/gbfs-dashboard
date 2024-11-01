@@ -5,6 +5,7 @@ trigger:
 
 variables:
   AWS_REGION: 'us-east-1'
+
 stages:
   # Stage 1: Setup Backend for Terraform State
   - stage: SetupBackend
