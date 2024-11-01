@@ -21,7 +21,7 @@ stages:
 
           - task: AWSCLI@1
             inputs:
-              awsCredentials: 'gbfs'
+              awsCredentials: 'awsSC'
               regionName: 'us-east-1'
               scriptType: 'bash'
               scriptLocation: 'inline'
