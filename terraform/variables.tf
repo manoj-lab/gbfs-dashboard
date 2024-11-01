@@ -21,3 +21,8 @@ variable "iam_role" {
   type        = string
   default     = "gbfsEcsTaskExecutionRole"
 }
+
+variable "docker_image" {
+  description = "The Docker image to deploy for the gbfs-dashboard application"
+  type        = string
+}
