@@ -21,7 +21,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "versioning-bucket-config" {
   bucket = aws_s3_bucket.terraform_state_bucket.id
 
   rule{
-  
+    id = "config"
+    
   noncurrent_version_expiration {
       noncurrent_days = 90
     }
