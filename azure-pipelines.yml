@@ -27,6 +27,8 @@ stages:
 
           - script: |
               cd terraform/backend
+              export AWS_ACCESS_KEY_ID="$(aws_id)"
+              export AWS_SECRET_ACCESS_KEY="$(aws_key)"
               terraform init
               terraform apply -auto-approve
             displayName: "Initialize and apply Terraform for backend process"
