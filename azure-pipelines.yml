@@ -1,0 +1,73 @@
+trigger:
+  branches:
+    include:
+      - main
+
+stages:
+  # Stage 1: Setup Backend for Terraform State
+  - stage: SetupBackend
+    displayName: "Setup Terraform Backend"
+    jobs:
+      - job: SetupBackendJob
+        displayName: "Setting up S3 bucket for tsstate store"
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: 'latest'
+
+          - checkout: self
+
+          - script: |
+              cd terraform/backend
+              terraform init
+              terraform apply -auto-approve
+            displayName: "Initialize and apply Terraform for backend process"
+
+  # Stage 2: Build and Push Docker Image
+  - stage: BuildAndPushDockerImage
+    displayName: "Build and Push Docker Image"
+    dependsOn: SetupBackend
+    condition: succeeded('SetupBackend')
+    jobs:
+      - job: BuildAndPushDocker
+        displayName: "Build and Push Docker Image"
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+
+          - checkout: self
+
+          - script: |
+              pip install -r requirements.txt
+              docker build -t mano7899/gbfs-dashboard:$(Build.BuildId) .
+              docker push mano7899/gbfs-dashboard:$(Build.BuildId)
+            displayName: "Build and Push Docker Image to Docker Hub"
+
+  # Stage 3: Deploy Infrastructure and Update ECS Service with New Image
+  - stage: DeployInfraAndApp
+    displayName: "Deploy Infrastructure and Application"
+    dependsOn: BuildAndPushDockerImage
+    condition: succeeded('BuildAndPushDockerImage')
+    jobs:
+      - job: DeployJob
+        displayName: "Apply Terraform for Infrastructure and Deploy Application"
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: 'latest'
+
+          - checkout: self
+
+          # Step 1: Initialize and apply Terraform to create/update infrastructure
+          - script: |
+              cd terraform
+              terraform init 
+              terraform apply -var="docker_image=your-dockerhub-username/gbfs-dashboard:$(Build.BuildId)" -auto-approve
+            displayName: "Initialize and apply Terraform for infrastructure with image tag"
