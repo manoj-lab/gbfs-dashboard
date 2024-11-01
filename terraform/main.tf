@@ -14,7 +14,7 @@ resource "aws_ecs_task_definition" "gbfs_task" {
   container_definitions = jsonencode([
     {
       name      = "gbfs-container"
-      image     = "your-dockerhub-username/gbfs-dashboard:latest" # Will define this in CI/CD pipeline
+      image     = "var.docker_image"
       cpu       = 256
       memory    = 512
       essential = true
