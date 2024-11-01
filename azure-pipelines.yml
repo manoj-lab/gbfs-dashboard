@@ -19,12 +19,6 @@ stages:
 
           - checkout: self
 
-          # - task: AWSCLI@1
-          #   inputs:
-          #     awsCredentials: 'awsSC'
-          #     regionName: 'us-east-1'
-          #     awsCommand: 's3 mb s3://my-gbfs-terraform-state-bucket'
-
           - script: |
               cd terraform/backend
               export AWS_ACCESS_KEY_ID="$(aws_id)"
@@ -32,8 +26,6 @@ stages:
               terraform init
               terraform apply -auto-approve
             displayName: "Initialize and apply Terraform for backend process"
-            # env:
-            #   AWS_REGION: 'us-east-1'
 
   # Stage 2: Build and Push Docker Image
   - stage: BuildAndPushDockerImage
@@ -55,13 +47,9 @@ stages:
           - task: Docker@2
             inputs:
               containerRegistry: 'DockerHubServiceConnection'
-              command: 'login'
-
-          - script: |
-              pip install -r requirements.txt
-              docker build -t mano7899/gbfs-dashboard:$(Build.BuildId) .
-              docker push mano7899/gbfs-dashboard:$(Build.BuildId)
-            displayName: "Build and Push Docker Image to Docker Hub"
+              repository: 'mano7899/gbfs-dashboard'
+              command: 'buildAndPush'
+              Dockerfile: '**/Dockerfile'
 
   # Stage 3: Deploy Infrastructure and Update ECS Service with New Image
   - stage: DeployInfraAndApp
